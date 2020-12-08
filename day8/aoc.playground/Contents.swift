@@ -8,10 +8,14 @@ let instructions = contents
     .components(separatedBy: "\n")
 
 let regex = try NSRegularExpression(pattern: "^(.*) ([\\+\\-]{1})(\\d+)$")
-let pc = 0;
 
-for n in 0..<instructions.count {
-    let line = instructions[n]
+var acc = 0;
+var pc = 0;
+while (true) {
+
+    let line = instructions[pc]
+    
+    print(pc, ":", line)
     
     if let m = regex.firstMatch(in: line, options: [], range: NSRange(location: 0, length: line.utf16.count)) {
         
@@ -21,9 +25,20 @@ for n in 0..<instructions.count {
         
         let opValue = (sign=="-" ? -1 : 1) * Int(operand)!
         
-        print(instruction, ">", opValue)
+        
+        switch instruction {
+            case "acc":
+                acc += opValue
+            case "nop":
+                break;  // do nothing.
+            case "jmp":
+                pc += opValue - 1
+            default:
+                print("unexpected opcode", instruction)
+        }
         
     }
+    pc += 1
 
 }
 //
