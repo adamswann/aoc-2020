@@ -9,6 +9,8 @@ let regex1 = try NSRegularExpression(pattern: "^(.*) bags contain (.*)\\.$", opt
 let regex2 = try NSRegularExpression(pattern: "^(\\d+) (.*?) bags?$", options: .caseInsensitive)
 
 var containedBy: [String:[String]] = [:]
+var contains: [String:[(String,Int)]] = [:]
+
 var golds: [String] = []
 
 for rule in rules {
@@ -20,6 +22,8 @@ for rule in rules {
         let outer = String(rule[outerRange])
         //print(outer)
         
+        
+        contains[outer] = []
         if let innersRange = Range(match.range(at: 2), in: rule) {
             let inners = rule[innersRange]
             
@@ -34,7 +38,7 @@ for rule in rules {
                     
                     if let match = regex2.firstMatch(in: bag, options: [], range: NSRange(location: 0, length: bag.utf16.count)) {
                     
-                        //let quantity = bag[Range(match.range(at: 1), in: bag)!];
+                        let quantity = Int(bag[Range(match.range(at: 1), in: bag)!])!;
                         let color = String(bag[Range(match.range(at: 2), in: bag)!]);
                         //print("\t", quantity, " --> ", color)
                         
@@ -46,6 +50,8 @@ for rule in rules {
                             containedBy[color] = []
                         }
                         containedBy[color]?.append(outer)
+                    
+                        contains[outer]?.append((color,quantity))
                     }
                     
                 }
@@ -57,7 +63,10 @@ for rule in rules {
 var winners: [String] = []
 visit(bags: golds)
 var unique = Array(Set(winners))
-print("count: ", unique.count)
+print("count, part1: ", unique.count)
+
+let total = visit2(bags: contains["shiny gold"]!)
+print("total, part2: ", total)
 
 func visit(bags: [String]) {
     for bag in bags {
@@ -68,4 +77,18 @@ func visit(bags: [String]) {
             visit(bags: containedBy[bag]!)
         }
     }
+}
+
+func visit2(bags: [(String,Int)]) -> Int {
+    var runningTotal = 0
+    for bag in bags {
+        print(bag)
+//        winners.append(bag)
+        runningTotal += bag.1
+        
+        if contains[bag.0] != nil {
+            runningTotal += visit2(bags: contains[bag.0]!) * bag.1
+       }
+    }
+    return runningTotal
 }
