@@ -7,11 +7,24 @@ let instructions = contents
     .trimmingCharacters(in: .whitespacesAndNewlines)
     .components(separatedBy: "\n")
 
+let regex = try NSRegularExpression(pattern: "^(.*) ([\\+\\-]{1})(\\d+)$")
 let pc = 0;
 
-
 for n in 0..<instructions.count {
-    print(n, ":", instructions[n])
+    let line = instructions[n]
+    
+    if let m = regex.firstMatch(in: line, options: [], range: NSRange(location: 0, length: line.utf16.count)) {
+        
+        let instruction = line[Range(m.range(at: 1), in: line)!];
+        let sign = line[Range(m.range(at: 2), in: line)!];
+        let operand = line[Range(m.range(at: 3), in: line)!];
+        
+        let opValue = (sign=="-" ? -1 : 1) * Int(operand)!
+        
+        print(instruction, ">", opValue)
+        
+    }
+
 }
 //
 //let regex1 = try NSRegularExpression(pattern: "^(.*) bags contain (.*)\\.$", options: .caseInsensitive)
