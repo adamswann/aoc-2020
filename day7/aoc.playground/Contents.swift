@@ -1,6 +1,6 @@
 import Foundation
 
-let fileUrl = Bundle.main.url(forResource: "sample", withExtension: "txt")
+let fileUrl = Bundle.main.url(forResource: "input", withExtension: "txt")
 let contents = try! String(contentsOf: fileUrl!, encoding: String.Encoding.utf8)
 
 let rules = contents.components(separatedBy: "\n")
@@ -18,14 +18,14 @@ for rule in rules {
         let outerRange = Range(match.range(at: 1), in: rule)!
     
         let outer = String(rule[outerRange])
-        print(outer)
+        //print(outer)
         
         if let innersRange = Range(match.range(at: 2), in: rule) {
             let inners = rule[innersRange]
             
             if (inners == "no other bags") {
                 // Nothing to do.
-                print("\tempty")
+                //print("\tempty")
             } else {
                 
                 let bags = inners.components(separatedBy: ", ")
@@ -34,9 +34,9 @@ for rule in rules {
                     
                     if let match = regex2.firstMatch(in: bag, options: [], range: NSRange(location: 0, length: bag.utf16.count)) {
                     
-                        let quantity = bag[Range(match.range(at: 1), in: bag)!];
+                        //let quantity = bag[Range(match.range(at: 1), in: bag)!];
                         let color = String(bag[Range(match.range(at: 2), in: bag)!]);
-                        print("\t", quantity, " --> ", color)
+                        //print("\t", quantity, " --> ", color)
                         
                         if (color == "shiny gold") {
                             golds.append(outer)
@@ -50,6 +50,22 @@ for rule in rules {
                     
                 }
             }
+        }
+    }
+}
+
+var winners: [String] = []
+visit(bags: golds)
+var unique = Array(Set(winners))
+print("count: ", unique.count)
+
+func visit(bags: [String]) {
+    for bag in bags {
+        //print(bag)
+        winners.append(bag)
+        
+        if containedBy[bag] != nil {
+            visit(bags: containedBy[bag]!)
         }
     }
 }
