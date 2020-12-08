@@ -17,6 +17,7 @@ while (true) {
     let line = instructions[pc]
     print(pc, ":", line, "[count=\(execCount[pc]), acc=\(acc)]")
     
+    // Part 1 answerer
     if (execCount[pc] == 1) {
         break;
     }
