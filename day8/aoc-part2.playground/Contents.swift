@@ -23,7 +23,7 @@ func exec(instructions: [String], swap: Int) -> Bool {
     while (true) {
 
         if (pc >= instructions.count) {
-            print("complete i=\(swap), acc=\(acc)") // Answer is in acc
+            print("complete i=\(swap), acc=\(acc)") // Answer is in acc (it worked)
             return true;
         }
         
