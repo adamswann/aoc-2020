@@ -5,15 +5,20 @@ let contents = try! String(contentsOf: fileUrl!, encoding: String.Encoding.utf8)
 
 let rules = contents.components(separatedBy: "\n")
 
+let regex1 = try NSRegularExpression(pattern: "^(.*) bags contain (.*)\\.$", options: .caseInsensitive)
+let regex2 = try NSRegularExpression(pattern: "^(\\d+) (.*?) bags?$", options: .caseInsensitive)
+
+var containedBy: [String:[String]] = [:]
+var golds: [String] = []
+
 for rule in rules {
-    //print(rule)
     
-    let pattern = "^(.*) bags contain (.*)\\.$"
-    let regex = try NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-    let match = regex.firstMatch(in: rule, options: [], range: NSRange(location: 0, length: rule.utf16.count))!
-    let outerRange = Range(match.range(at: 1), in: rule)!
+    if let match = regex1.firstMatch(in: rule, options: [], range: NSRange(location: 0, length: rule.utf16.count)) {
+        
+        let outerRange = Range(match.range(at: 1), in: rule)!
     
-    print(rule[outerRange])
+        let outer = String(rule[outerRange])
+        print(outer)
         
         if let innersRange = Range(match.range(at: 2), in: rule) {
             let inners = rule[innersRange]
@@ -27,18 +32,24 @@ for rule in rules {
                 
                 for bag in bags {
                     
-                    let pattern = "^(\\d+) (.*?) bags?$"
-                    let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-                    if let match = regex?.firstMatch(in: bag, options: [], range: NSRange(location: 0, length: bag.utf16.count)) {
+                    if let match = regex2.firstMatch(in: bag, options: [], range: NSRange(location: 0, length: bag.utf16.count)) {
                     
-                        let quantity = Range(match.range(at: 1), in: bag)!;
-                        let color = Range(match.range(at: 2), in: bag)!;
-                        print("\t", bag[quantity], " --> ", bag[color])
+                        let quantity = bag[Range(match.range(at: 1), in: bag)!];
+                        let color = String(bag[Range(match.range(at: 2), in: bag)!]);
+                        print("\t", quantity, " --> ", color)
                         
+                        if (color == "shiny gold") {
+                            golds.append(outer)
+                        }
+                        
+                        if containedBy[color] == nil {
+                            containedBy[color] = []
+                        }
+                        containedBy[color]?.append(outer)
                     }
                     
                 }
             }
         }
-      
+    }
 }
