@@ -12,17 +12,29 @@ let preamble = 25
 let target = 1930745883
 
 for i in 0..<contents.count {
-    print(i)
+    //print(i)
     var acc = 0
-    var j = 0
+    var j = i
+    var smallest = contents[i]
+    var largest = contents[j]
     repeat {
         acc += contents[j]
-        j++
+        
+        if (contents[j] < smallest) {
+            smallest = contents[j]
+        }
+        
+        if (contents[j] > largest) {
+            largest = contents[j]
+        }
         
         if acc == target {
-            print("winner. i=\(i), j=\(j)")
+            print("winner. i=\(i) , j=\(j)")
+            print("sum = \(largest+smallest)")
             exit(0)
         }
+        
+        j += 1
         
     } while (acc < target)
     
